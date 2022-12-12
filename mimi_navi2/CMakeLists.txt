@@ -17,13 +17,52 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(rclcpp REQUIRED)
-#find_package(message_generation REQUIRED)
-find_package(tf REQUIRED)
+find_package(rclcpp_action REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
+#find_package(happymimi_msgs2 REQUIRED)
+find_package(tf REQUIRED)
+
+set(action_files "action/Navi2Location.action")
+set(srv_files "srv/Navi2Location.srv"
+              "srv/SetLocation.srv")
+rosidl_generate_interfaces(${PROJECT_NAME}
+  ${action_files}
+  ${srv_files}
+)
+ament_export_dependencies(rosidl_default_runtime)
+
+include_directories(include)
+
+add_executable(cpp_executable src/navi2_location_acserver.cpp)
+ament_target_dependencies(cpp_executable
+  rclcpp
+  rclcpp_action
+  std_msgs
+  nav2_msgs
+  #happymimi_msgs2
+)
+
+install(TARGETS cpp_executable
+        DESTINATION lib/${PROJECT_NAME}
+)
+
+install(DIRECTORY
+        src include scripts navi2_location_acserver
+        DESTINATION share/${PROJECT_NAME}
+)
+
+ament_python_install_package(${PROJECT_NAME})
+#install(PROGRAMS
+#  scripts/navi_location.py
+#  scripts/set_location.py
+#  scripts/navi_coord.py
+#  DESTINATION lib/${PROJECT_NAME}
+#)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

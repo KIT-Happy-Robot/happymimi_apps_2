@@ -29,11 +29,12 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "std_msgs/msg/string.hpp"
-#include "std_msgs/msg/Float64.hpp"
+#include "std_msgs/msg/float64.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "rclcpp/time.hpp"
 
-#include "happymimi_msgs2/srv/NaviLocation.hpp" //------------------!!!
+#include "mimi_navi2/srv/navi2_location.hpp" 
+//#include "mimi_navi2/action/navi2_location.hpp" //------------------!!!
 
 using namespace std::chrono_literals;
 using std::placeholders::_1; //----------------
@@ -44,40 +45,45 @@ using std::placeholders::_2; //_1,_2,_Nは、bind()で使用するプレース�
 class Navi2LocationAcServer : public rclcpp::Node
 {
 // local変数の宣言 Service,メンバ変数などの型を宣言
-pravete:
+pravate:
   std::list<std::string> location_dict;
   std::string location_name;
 
   // Instance of necessary types
   using Navi2Pose = nav2_msgs::action::NavigateToPose;
+  using Navi2Location = mimi_navi2::action::NavigateToPose;
   using Navi2PoseCGH= rclcpp_action::ClientGoalHandle<Navi2Pose>;
   rclcpp_action::Client<Navi2Pose>::SharedPtr n2p_client;
   
   // SERVICE    // !!!!
-  rclcpp::Service<>::SharedPtr navi2_srv;
+  rclcpp::Service<Navi2Location>::SharedPtr navi2_srv;
   // clear costmap
   //rclcpp::Service<nav2_msgs::srv::ClearCostmapAroundRobot>::SharedPtr clear_around_service_;
 
   // PUBLISHER
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr current_location_pub;
-  rclcpp::Publisher<std_msgs::msg::Float62>::SharedPtr head_pub;
+  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr head_pub;
 
 
-  bool searchLocationName(const std::shared_ptr<happymimi_msgs2::srv::NaviLocation> request,
-                          const std::shared_ptr<happymimi_msgs2::srv::NaviLocation> result
+  bool searchLocationName(const std::shared_ptr<Navi2Location> request,
+                          const std::shared_ptr<Navi2Location> result
   );
+  void sendGoal();// !!!!
 
-  sendGoal();
-
-// define FUNC
 public:
   Navi2LocationAcServer() : Node("navi2_location_acserver")//{
-    //インスタンス化時に初めに実行する場所？
-  //}
-  
+    // 初めに実行する場所? }
+
+  // Constructerにexplicit修飾子をつけ、暗黙的な型変換を防止できる
+  explicit Navi2LocationAcServer(): Node("navi2_location_acserver")
+  {
+    // ACTION  Generate ac client (lib::func<type>())
+    this->n2p_client =
+      rclcpp_action::create_client<Navi2Pose>(this,"navi2pose_client");
+  }
+
   void init(){
-    //action
-    // "/move_base", MoveBaseAction
+    // ACTION
     // SERVICE
     auto navi2_srv = this->create_service<happymimi_navigation
     // PUB
@@ -85,14 +91,6 @@ public:
     auto head_pub = this->create_publisher<std::msg::Float64>("/servo/head", 1)
     // location_list
 
-  }
-
-  // Constructerにexplicit修飾子をつけ、暗黙的な型変換を防止できる
-  explicit Navi2LocationAcServer(): Node("navi2_location_acserver")
-  {
-    // Generate ac client (lib::func<type>())
-    this->n2p_client =
-      rclcpp_action::create_client<Navi2Pose>(this,"navi2pose_client");
   }
 
   bool searchLocationName(const std::shared_ptr<happymimi_msgs2::srv::NaviLocation> request,

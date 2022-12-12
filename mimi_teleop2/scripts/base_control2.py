@@ -11,7 +11,7 @@ from geometry_msgs.msg import Twist
 from std_msgs.msg import Float64
 
 
-class BaseControl(node):
+class BaseControl(Node):
     def __init__(self):
         # Publisher
         self.twist_pub = rospy.Publisher('/cmd_vel', Twist, queue_size = 1)
