@@ -22,9 +22,12 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
-
-add_executable(base_control src/base_control2.py)
-ament_target_dependencies(base_control2 rclpy std_msgs geometry_msgs)
+find_package(message_generation REQUIRED)
+add_executable(base_control2 src/base_control2.py)
+ament_target_dependencies(base_control2
+                          rclpy
+                          std_msgs
+                          geometry_msgs)
 install(TARGETS base_control2 DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
