@@ -27,9 +27,9 @@ find_package(nav2_msgs REQUIRED)
 #find_package(happymimi_msgs2 REQUIRED)
 find_package(tf REQUIRED)
 
-set(action_files "action/Navi2Location.action")
+set(action_files "action/Nav2LocAc.action")
 set(srv_files "srv/Navi2Location.srv"
-              "srv/SetLocation.srv")
+              "srv/SetLocation2.srv")
 rosidl_generate_interfaces(${PROJECT_NAME}
   ${action_files}
   ${srv_files}
@@ -57,12 +57,12 @@ install(DIRECTORY
 )
 
 ament_python_install_package(${PROJECT_NAME})
-#install(PROGRAMS
-#  scripts/navi_location.py
-#  scripts/set_location.py
-#  scripts/navi_coord.py
-#  DESTINATION lib/${PROJECT_NAME}
-#)
+install(PROGRAMS
+  scripts/navi_location2.py
+  scripts/set_location2.py
+  scripts/navi_coord2.py
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
