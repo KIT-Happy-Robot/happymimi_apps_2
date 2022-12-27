@@ -26,7 +26,6 @@ private:
   // Usage: 
     //auto request = std::make_shared<NavLoc::Request>();
     //auto result=navi2_srv->async_send_request(request);
-  //using Nav2Loc = mimi_navi2::action::Nav2LocAc; // Action
   using Nav2PoseCGH = rclcpp_action::ClientGoalHandle<Nav2Pose>;
   // ActionClient
   rclcpp_action::Client<Nav2Pose>::SharedPtr n2p_client;
@@ -42,7 +41,6 @@ private:
   //void init();
 
 public:
-  //Navi2LocationAcServer() : Node("navi2_location_acserver")
   explicit Navi2LocationAcServer(): Node("navi2_location_acserver")
   {
     // ACTION
@@ -64,8 +62,8 @@ public:
     //std::vector<double> coord_list
   }
 
-  bool searchLocationName(const std::shared_ptr<NavLoc> request,
-                          const std::shared_ptr<NavLoc> response) {
+  bool searchLocationName(const std::shared_ptr<NavLoc> &request,
+                          const std::shared_ptr<NavLoc> &response) {
     //!!!
     if ( std::find(location_list.begin(), location_list.end(), 
                    request->location_name) != location_list.end() ){
@@ -76,7 +74,7 @@ public:
       RCLCPP_INFO(this->get_logger(), "<%s> doesn't exist.", request->location_name);
       return response->result = false; //!!!
     }
-  };
+  }
 
   void sendGoalPose(const std::vector<double> coord_list) {
     //　wait for action server
@@ -111,7 +109,7 @@ public:
     //RCLCPP_INFO(get_logger(), "clearing cost map...");
 
     // Start Navigation
-    head_pub->publish(0);
+    this->head_pub->publish(0.0);
     n2p_client->async_send_goal(goal, goal_options);
   }
 
@@ -130,7 +128,7 @@ public:
     switch (result.code){
       case rclcpp_action::ResultCode::SUCCEEDED:
         RCLCPP_INFO(this->get_logger(), "Navigation Success!");
-        this->current_location_pub->publish(); //!!!
+        this->current_location_pub->publish(this->location_name); //!!!
         
         return result;
       case rclcpp_action::ResultCode::ABORTED:
