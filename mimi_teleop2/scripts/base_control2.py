@@ -91,7 +91,7 @@ class BaseControl(Node):
         pass
     speed = abs(speed)
     self.target_time = abs(dist / speed)
-    self.twist_value.linear.x = dist/abs(dist)*speed
+    self.twist_value.linear.x = dist / abs(dist) * speed
     self.twist_value.angular.z = 0.0
     self.publishTwist()
 
