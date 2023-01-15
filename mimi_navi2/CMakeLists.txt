@@ -38,7 +38,7 @@ ament_export_dependencies(rosidl_default_runtime)
 
 include_directories(include)
 
-add_executable(cpp_executable src/navi2_location_acserver.cpp)
+add_executable(cpp_executable src/navi2_location_server.cpp)
 ament_target_dependencies(cpp_executable
   rclcpp
   rclcpp_action

@@ -33,6 +33,7 @@ enum NaviState {
 class Navi2LocationAcServer : public rclcpp::Node
 {
 private:
+  // Alias
   using Nav2Pose = nav2_msgs::action::NavigateToPose;
   using Nav2PoseCGH = rclcpp_action::ClientGoalHandle<Nav2Pose>;
   using NavLocAc = mimi_navi2::action::Navi2LocationAc; //!!
