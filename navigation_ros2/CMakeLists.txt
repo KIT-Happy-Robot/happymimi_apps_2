@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(mimi_navi2)
+project(navigation_ros2)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -27,7 +27,7 @@ find_package(nav2_msgs REQUIRED)
 find_package(happymimi_msgs2 REQUIRED)
 find_package(tf REQUIRED)
 
-set(action_files "action/Navi2LocationAc.action")
+set(action_files "action/NaviLocationAc.action")
 set(srv_files "srv/NaviLocation.srv"
               "srv/SetLocation.srv")
 rosidl_generate_interfaces(${PROJECT_NAME}
@@ -38,7 +38,7 @@ ament_export_dependencies(rosidl_default_runtime)
 
 include_directories(include)
 
-add_executable(cpp_executable src/navi2_location_server.cpp)
+add_executable(cpp_executable src/navi_location_server.cpp)
 ament_target_dependencies(cpp_executable
   rclcpp
   rclcpp_action
@@ -54,15 +54,15 @@ install(TARGETS cpp_executable
 
 
 install(DIRECTORY
-        src include scripts launch config navi2_location_acserver
+        src include scripts launch config navi_location_acserver
         DESTINATION share/${PROJECT_NAME}
 )
 
 ament_python_install_package(${PROJECT_NAME})
 install(PROGRAMS
-  scripts/navi_location2.py
-  scripts/set_location2.py
-  scripts/navi_coord2.py
+  scripts/navi_location.py
+  scripts/set_location.py
+  scripts/navi_coord.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

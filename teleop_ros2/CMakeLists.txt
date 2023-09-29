@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(mimi_teleop2)
+project(teleop_ros2)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -33,14 +33,14 @@ find_package(nav_msgs REQUIRED)
 #)
 
 install(
-  DIRECTORY src include scripts mimi_teleop2
+  DIRECTORY src include scripts teleop_ros2
   DESTINATION share/${PROJECT_NAME}
 )
 
 ament_python_install_package(${PROJECT_NAME})
 
 install(PROGRAMS
-  scripts/base_control2.py
+  scripts/base_control.py
   DESTINATION lib/${PROJECT_NAME}
 )
 #install(TARGETS base_control2 DESTINATION lib/${PROJECT_NAME})
