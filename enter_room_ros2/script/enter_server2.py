@@ -14,6 +14,7 @@ from sensor_msgs.msg import LaserScan
 
 
 
+
 class EnterRoomServer():    #ros2用に変更したものを順次書き込む
     def __init__(self):
     #     service = rclpy.Service('/enter_room_server', EnterRoom, self.execute)
