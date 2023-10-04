@@ -21,15 +21,17 @@ from happymimi_teleop.base_control import BaseControl   #このまま使える�
 class EnterRoomServer:
     def __init__(self):
         rclpy.init()
-        self.node = rclpy.create_node('enter_room_server')  # ノードの名前を変更
-        self.service = self.node.create_service(EnterRoom, '/enter_room_server', self.execute)  # サービスの作成
-        self.logger = self.node.get_logger()  # ログを取得
+        self.node = rclpy.create_node('enter_room_server')
+        # サービスの作成
+        self.service = self.node.create_service(EnterRoom, '/enter_room_server', self.execute)
+        # ログを取得
+        self.logger = self.node.get_logger()
 
         # speak
-        self.tts_srv = self.node.create_client(StrTrg, '/tts')  # サービスクライアントの作成
+        self.tts_srv = self.node.create_client(StrTrg, '/tts')
 
         # Subscriber
-        self.subscription = self.node.create_subscription(LaserScan, '/scan', self.laser_callback, 10)  # Subscriberの作成
+        self.subscription = self.node.create_subscription(LaserScan, '/scan', self.laser_callback, 10)
 
         # Module
         self.base_control = BaseControl()
@@ -38,7 +40,7 @@ class EnterRoomServer:
         self.front_laser_dist = 999.9
 
     def laser_callback(self, receive_msg):
-        self.front_laser_dist = receive_msg.ranges[-1]  # レーザースキャンデータを反時計回りに対応させる
+        self.front_laser_dist = receive_msg.ranges[359]
 
     def execute(self, request, response):
         try:
