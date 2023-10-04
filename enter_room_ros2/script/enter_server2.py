@@ -12,41 +12,59 @@ import rclpy
 import sys
 from sensor_msgs.msg import LaserScan
 
+#まだ変更していない
+from enter_room.srv import EnterRoom, EnterRoomResponse
+from happymimi_msgs.srv import StrTrg
+from happymimi_teleop.base_control import BaseControl   #このまま使えるかも？
 
 
-
-class EnterRoomServer():    #ros2用に変更したものを順次書き込む
+class EnterRoomServer:
     def __init__(self):
-    #     service = rclpy.Service('/enter_room_server', EnterRoom, self.execute)
-        rclpy.loginfo("Ready to set enter_room_server")
+        rclpy.init()
+        self.node = rclpy.create_node('enter_room_server')  # ノードの名前を変更
+        self.service = self.node.create_service(EnterRoom, '/enter_room_server', self.execute)  # サービスの作成
+        self.logger = self.node.get_logger()  # ログを取得
+
         # speak
-    #    self.tts_srv = rclpy.ServiceProxy('/tts', StrTrg)
-        #Subscriber
-        rclpy.Subscriber('/scan', LaserScan, self.laserCB)
-    #     # Module
-    #     self.base_control = BaseControl()
-        #Value
+        self.tts_srv = self.node.create_client(StrTrg, '/tts')  # サービスクライアントの作成
+
+        # Subscriber
+        self.subscription = self.node.create_subscription(LaserScan, '/scan', self.laser_callback, 10)  # Subscriberの作成
+
+        # Module
+        self.base_control = BaseControl()
+
+        # Value
         self.front_laser_dist = 999.9
 
-    def laserCB(self, receive_msg):
-        self.front_laser_dist = receive_msg.ranges[359]
+    def laser_callback(self, receive_msg):
+        self.front_laser_dist = receive_msg.ranges[-1]  # レーザースキャンデータを反時計回りに対応させる
 
-    def execute(sef,srv_req):
-        #try:
-            #safe_dist = 1.0
-            #target_dist = srv_req.distance + self.front_laser_dist
-            #self.tts_srv('Prease open the door')
-            print("Prease open the door")
-        #     while self.front_laser_dist <= safe_dist:
-        #         rclpy.sleep(0.1)
-        #     self.tts_srv('Thank you')
-        #     self.base_control.translateDist(target_dist, srv_req.velocity)
-        #     return EnterRoomResponse(result = True)
-        # except rclpy.ROSInterruptException:
-        #     rclpy.logger("!!Interrupt!!")
-        #     return EnterRoomResponse(result = False)
+    def execute(self, request, response):
+        try:
+            safe_dist = 1.0
+            target_dist = request.distance + self.front_laser_dist
+
+            # speakサービスの呼び出し
+            self.tts_srv.wait_for_service()
+            self.tts_srv.call(StrTrg.Request(text='Prease open the door'))
+
+            self.logger.info("Prease open the door")
+            while self.front_laser_dist <= safe_dist:
+                rclpy.spin_once(self.node, timeout_sec=0.1)
+            # speakサービスの呼び出し
+            self.tts_srv.call(StrTrg.Request(text='Thank you'))
+            self.base_control.translateDist(target_dist, request.velocity)
+            response.result = True
+        except KeyboardInterrupt:
+            self.logger.info("!!Interrupt!!")
+            response.result = False
+        return response
+
+def main(args=None):
+    rclpy.init(args=args)
+    enter_room_server = EnterRoomServer()
+    rclpy.spin(enter_room_server.node)
 
 if __name__ == '__main__':
-    rclpy.init_node('enter_server')
-    ers = EnterRoomServer()
-    rclpy.spin()
+    main()
