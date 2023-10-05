@@ -11,6 +11,7 @@
 import rclpy
 import sys
 from sensor_msgs.msg import LaserScan
+from rclpy.node import Node
 
 #まだ変更していない
 from enter_room.srv import EnterRoom, EnterRoomResponse
@@ -18,7 +19,7 @@ from happymimi_msgs2.srv import StrTrg
 from happymimi_teleop.base_control import BaseControl   #このまま使えるかも？
 
 
-class EnterRoomServer:
+class EnterRoomServer(Node):
     def __init__(self):
         rclpy.init()
         self.node = rclpy.create_node('enter_room_server')
