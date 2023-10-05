@@ -14,7 +14,7 @@ from sensor_msgs.msg import LaserScan
 
 #まだ変更していない
 from enter_room.srv import EnterRoom, EnterRoomResponse
-from happymimi_msgs.srv import StrTrg
+from happymimi_msgs2.srv import StrTrg
 from happymimi_teleop.base_control import BaseControl   #このまま使えるかも？
 
 
