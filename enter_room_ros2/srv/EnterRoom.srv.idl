@@ -1,0 +1,11 @@
+module enter_room
+{
+  service EnterRoom
+  {
+    float32 distance
+    float32 velocity
+    ---
+    bool result
+  }
+}
+
