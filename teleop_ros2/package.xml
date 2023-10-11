@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>teleop_ros2</name>
+  <!--<name>mimi_teleop2</name>--> 
+  <!--mimi_teleop2ではエラーが出たのでteleop_ros2に書き換えました。元のものが正しければもとに戻してくださいby溪口-->
+  <name>teleop_ros2</name> 
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="c1115332@planet.kanazawa-it.ac.jp">hiroto</maintainer>
