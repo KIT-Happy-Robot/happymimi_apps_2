@@ -33,7 +33,7 @@ find_package(nav_msgs REQUIRED)
 #)
 
 install(
-  DIRECTORY src include scripts teleop_ros2
+  DIRECTORY  include scripts teleop_ros2
   DESTINATION share/${PROJECT_NAME}
 )
 
