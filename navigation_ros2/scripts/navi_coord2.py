@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import rospy
-import rosparam
+import rclpy
+#import rosparam
 import actionlib
 from std_srvs.srv import Empty
 from std_msgs.msg import Float64
@@ -11,7 +11,7 @@ from happymimi_navigation.srv import NaviCoord, NaviCoordResponse
 
 class NaviCoordServer():
     def __init__(self):
-        service = rospy.Service('navi_coord_server', NaviCoord, self.sendGoal)
+        self.srv = self.creat('navi_coord_server', NaviCoord, self.sendGoal)
         rospy.loginfo("Ready to navi_coord_server")
         # Action
         self.ac = actionlib.SimpleActionClient('/move_base', MoveBaseAction)

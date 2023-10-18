@@ -33,7 +33,8 @@ find_package(nav_msgs REQUIRED)
 #)
 
 install(
-  DIRECTORY src include scripts teleop_ros2
+  #DIRECTORY src include scripts teleop_ros2
+  DIRECTORY scripts teleop_ros2
   DESTINATION share/${PROJECT_NAME}
 )
 
@@ -57,3 +58,4 @@ if(BUILD_TESTING)
 endif()
 
 ament_package()
+

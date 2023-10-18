@@ -25,7 +25,8 @@ find_package(rclcpp_action REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(happymimi_msgs2 REQUIRED)
-find_package(tf REQUIRED)
+#find_package(tf REQUIRED)
+find_package(tf2_ros REQUIRED)
 
 set(action_files "action/NaviLocationAc.action")
 set(srv_files "srv/NaviLocation.srv"
