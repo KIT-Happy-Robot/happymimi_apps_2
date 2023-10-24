@@ -24,10 +24,10 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
-find_package(happymimi_msgs2 REQUIRED)
-find_package(tf REQUIRED)
+#find_package(happymimi_msgs2 REQUIRED)
+find_package(tf2 REQUIRED)
 
-set(action_files "action/NaviLocationAc.action")
+set(action_files "action/Navi2aLocationAc.action")
 set(srv_files "srv/NaviLocation.srv"
               "srv/SetLocation.srv")
 rosidl_generate_interfaces(${PROJECT_NAME}
@@ -44,7 +44,8 @@ ament_target_dependencies(cpp_executable
   rclcpp_action
   std_msgs
   nav2_msgs
-  happymimi_msgs2
+  tf2
+  #happymimi_msgs2
 )
 
 install(TARGETS cpp_executable
