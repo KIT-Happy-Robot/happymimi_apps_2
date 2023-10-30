@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# "navi_location.py" の ROS2�?
+# "navi_location.py" の ROS2�?
 
 import time
 import threading
@@ -100,11 +100,11 @@ class NaviLocationServer2(Node):
 def main(args=None):
   rclpy.init(args=args)
   try:
-    # generate 'navi_location_server2'
-    nls2 = NaviLocationServer2()
-    rospy.spin()
-  expt rclpy.ROSInterruptException:
-    pass
+      # generate 'navi_location_server2'
+      nls2 = NaviLocationServer2()
+      rclpy.spin()
+  except rclpy.ROSInterruptException:
+      pass
   
 if __name__ == '__main__':
   main()

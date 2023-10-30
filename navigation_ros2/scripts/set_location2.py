@@ -1,85 +1,78 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#-----------------------------------------------------------
-# Title: 目的地の名前と座標を設定するサービスサーバー
-# Author: Issei Iida
-#-----------------------------------------------------------
-import subprocess as sp
-import rospy
-import rosparam
-import roslib.packages
-# from tf import TransformListener
+import rclpy
+from rclpy.node import Node
 from tf2_ros import TransformListener
 from happymimi_navigation.srv import SetLocation, SetLocationResponse
 
-
-class SetLocationServer():
+class SetLocationServer(Node):
     def __init__(self):
-        service = rospy.Service('/set_location_server', SetLocation, self.checkState)
-        rospy.loginfo("Ready to set_location_server")
+        super().__init__('set_location_server')
+        self.srv = self.create_service(SetLocation, '/set_location_server', self.check_state)
+        self.get_logger().info('Ready to set_location_server')
         # Value
-        self.tf = TransformListener()
+        self.tf = TransformListener(self)
+
         self.location_dict = {}
-        self.location_pose_x = 0.00
-        self.location_pose_y = 0.00
-        self.location_pose_z = 0.00
-        self.location_pose_w = 0.00
 
-    def getMapPosition(self):
-        position, rotation = self.tf.lookupTransform("/map", "/base_link", rospy.Time(0))
-        self.location_pose_x = position[0]
-        self.location_pose_y = position[1]
-        self.location_pose_z = rotation[2]
-        self.location_pose_w = rotation[3]
+    def get_map_position(self):
+        transform = self.tf.lookup_transform("map", "base_link", rclpy.Time())
+        self.location_pose_x = transform.transform.translation.x
+        self.location_pose_y = transform.transform.translation.y
+        self.location_pose_z = transform.transform.rotation.z
+        self.location_pose_w = transform.transform.rotation.w
 
-    def checkState(self, srv_req):
-        if srv_req.state == 'add':
-            rospy.loginfo("Add location")
-            return SetLocationResponse(result = self.addLocation(srv_req.name))
-        elif srv_req.state == 'save':
-            rospy.loginfo("Save location")
-            return SetLocationResponse(result = self.saveLocation(srv_req.name))
+    def check_state(self, request, response):
+        if request.state == 'add':
+            self.get_logger().info("Add location")
+            response.result = self.add_location(request.name)
+        elif request.state == 'save':
+            self.get_logger().info("Save location")
+            response.result = self.save_location(request.name)
         else:
-            rospy.logerr("<" + srv_req.state + "> state doesn't exist.")
-            return SetLocationResponse(result = False)
+            self.get_logger().error(f"<{request.state}> state doesn't exist.")
+            response.result = False
+        return response
 
-    def addLocation(self, name):
+    def add_location(self, name):
         if name in self.location_dict:
-            rospy.logerr('<' + name + '> has been registerd. Please enter a different name.')
+            self.get_logger().error(f'<{name}> has been registered. Please enter a different name.')
             return False
         elif name == '':
-            rospy.logerr("No location name enterd.")
+            self.get_logger().error("No location name entered.")
             return False
         else:
-            self.getMapPosition()
-            self.location_dict[name] = []
-            self.location_dict[name].append(self.location_pose_x)
-            self.location_dict[name].append(self.location_pose_y)
-            self.location_dict[name].append(self.location_pose_z)
-            self.location_dict[name].append(self.location_pose_w)
-            print self.location_dict
-            rospy.loginfo("Registerd <" + name + ">")
+            self.get_map_position()
+            self.location_dict[name] = [self.location_pose_x, self.location_pose_y, self.location_pose_z, self.location_pose_w]
+            self.get_logger().info(f"Registered <{name}>")
             return True
 
-    def saveLocation(self, file_name):
+    def save_location(self, file_name):
         try:
-            param_path = roslib.packages.get_pkg_dir("happymimi_params")
-            map_path = roslib.packages.get_pkg_dir("happymimi_navigation")
-            rospy.set_param('/location_dict', self.location_dict)
-            rosparam.dump_params(param_path + '/location/' + file_name + '.yaml', '/location_dict')
-            print rosparam.get_param('/location_dict')
-            sp.Popen(['rosrun','map_server','map_saver','-f', map_path + '/maps/'+ file_name])
-            rospy.loginfo("Saved as <" + file_name + ">")
+            param_path = rclpy.get_package_share_directory('happymimi_params')
+            map_path = rclpy.get_package_share_directory('happymimi_navigation')
+            self.set_parameters([], [{'name': '/location_dict', 'value': self.location_dict}])
+            rclpy.logging.get_logger('rosparam').info("Location dictionary:")
+            rclpy.logging.get_logger('rosparam').info(self.location_dict)
+
+            process = sp.Popen(['ros2', 'run', 'nav2_map_server', 'map_saver', '--map', f'{map_path}/maps/{file_name}'])
+            process.wait()
+            self.get_logger().info(f"Saved as <{file_name}>")
             return True
-        except rospy.ROSInterruptException:
-            rospy.logerr("Could not save.")
+        except rclpy.exceptions.ROSInterruptException:
+            self.get_logger().error("Could not save.")
             return False
 
+def main(args=None):
+    rclpy.init(args=args)
+    try:
+        set_location_server = SetLocationServer()
+        rclpy.spin(set_location_server)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        set_location_server.destroy_node()
+        rclpy.shutdown()
 
 if __name__ == '__main__':
-    rospy.init_node('set_location_server', anonymous = True)
-    try:
-        sls = SetLocationServer()
-        rospy.spin()
-    except rospy.ROSInterruptException:
-        pass
+    main()
