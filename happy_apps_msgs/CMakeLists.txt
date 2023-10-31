@@ -13,7 +13,7 @@ find_package(happymimi_msgs REQUIRED)
 find_package(action_msgs REQUIRED)
 
 
-rosidl_generate_interfacea(${PROJECT_NAME}
+rosidl_generate_interfaces(${PROJECT_NAME}
   # 以下はNavigationのサービスファイルを指定
   "srv/NaviCoord.srv"
   "srv/NaviLocation.srv"
