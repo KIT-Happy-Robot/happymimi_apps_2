@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'navi_coord = happy_navigation.navi_coord:main'
         ],
     },
 )
