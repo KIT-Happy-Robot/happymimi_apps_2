@@ -3,8 +3,8 @@
 <package format="3">
   <name>happy_navigation</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="takuchanpp@gmail.com">tk</maintainer>
+  <description>このパッケージは</description>
+  <maintainer email="takuchanpp@gmail.com">Takuchan</maintainer>
   <license>TODO: License declaration</license>
 
   <test_depend>ament_copyright</test_depend>
