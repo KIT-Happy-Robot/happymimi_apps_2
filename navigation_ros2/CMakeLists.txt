@@ -27,7 +27,7 @@ find_package(nav2_msgs REQUIRED)
 #find_package(happymimi_msgs2 REQUIRED)
 find_package(tf2 REQUIRED)
 
-set(action_files "action/Navi2aLocationAc.action")
+set(action_files "action/Navi2LocationAc.action")
 set(srv_files "srv/NaviLocation.srv"
               "srv/SetLocation.srv")
 rosidl_generate_interfaces(${PROJECT_NAME}
